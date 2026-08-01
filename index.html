@@ -257,8 +257,9 @@
 <div class="grid" id="groupGrid"></div>
 
 <div class="reset-link" id="resetLink">reiniciar sorteio</div>
+<div class="reset-link" id="fullscreenLink">⛶ tela cheia</div>
 
-<footer>RotaNorte Distribuidora · v2026.08.01-002</footer>
+<footer>RotaNorte Distribuidora · v2026.08.01-003</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -472,6 +473,17 @@ document.getElementById("resetLink").onclick = () => {
     renderGrid();
   }
 };
+
+document.getElementById("fullscreenLink").onclick = () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+};
+document.addEventListener("fullscreenchange", () => {
+  document.getElementById("fullscreenLink").textContent = document.fullscreenElement ? "⛶ sair da tela cheia" : "⛶ tela cheia";
+});
 
 loadState();
 renderGrid();
