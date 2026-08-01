@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteio · 2 Anos RotaNorte</title>
+<style>
+  :root {
+    --navy: #130754;
+    --navy-dark: #0a0330;
+    --navy-light: #1c0d6e;
+    --gold: #d4af37;
+    --gold-light: #f0d878;
+    --white: #ffffff;
+    --gray: #a8a4c8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+    background: radial-gradient(circle at 75% 10%, var(--navy-light), var(--navy) 55%, var(--navy-dark) 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2vh 3vw;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 2.2vh;
+  }
+  .badge {
+    display: inline-block;
+    border: 1.5px solid var(--gold);
+    color: var(--gold-light);
+    padding: 0.6vh 2vw;
+    border-radius: 30px;
+    font-size: clamp(11px, 1.3vw, 16px);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 1vh;
+  }
+  h1 {
+    font-size: clamp(24px, 3.6vw, 46px);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  h1 span { color: var(--gold-light); }
+  .subtitle {
+    color: var(--gray);
+    font-size: clamp(12px, 1.3vw, 16px);
+    margin-top: 0.8vh;
+    letter-spacing: 1px;
+  }
+  .rule-note {
+    color: var(--gold-light);
+    font-size: clamp(11px, 1.1vw, 14px);
+    margin-top: 0.6vh;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .test-banner {
+    display: inline-block;
+    background: #b5121b;
+    color: #fff;
+    padding: 0.6vh 2vw;
+    border-radius: 30px;
+    font-size: clamp(11px, 1.2vw, 15px);
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin: 1vh 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.4vw;
+    width: 100%;
+    max-width: 1400px;
+    height: 44vh;
+  }
+
+  .group-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(212,175,55,0.35);
+    border-radius: 14px;
+    padding: 1vh 0.8vw;
+    color: white;
+    font-size: clamp(13px, 1.35vw, 19px);
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .group-btn:hover {
+    background: rgba(212,175,55,0.12);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .group-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .group-btn.done {
+    border-color: rgba(212,175,55,0.7);
+    background: rgba(212,175,55,0.1);
+  }
+  .group-btn .winner-name {
+    display: block;
+    font-size: clamp(15px, 1.6vw, 22px);
+    font-weight: 800;
+    color: var(--gold-light);
+    margin-top: 0.7vh;
+  }
+  .group-btn .pending-tag {
+    display: block;
+    font-size: clamp(9px, 0.9vw, 13px);
+    font-weight: 500;
+    color: var(--gray);
+    margin-top: 0.6vh;
+    letter-spacing: 1px;
+  }
+
+  /* Modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6,2,30,0.88);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .overlay.active { display: flex; }
+  .modal {
+    background: linear-gradient(160deg, var(--navy-light), var(--navy) 70%);
+    border: 1.5px solid var(--gold);
+    border-radius: 24px;
+    padding: 4vh 3vw;
+    text-align: center;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .modal .group-name {
+    color: var(--gold-light);
+    font-size: clamp(12px, 1.3vw, 16px);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2vh;
+  }
+  .reveal-box {
+    min-height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3vh;
+  }
+  .reveal-name {
+    font-size: clamp(32px, 4.2vw, 58px);
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.5px;
+    transition: opacity 0.1s;
+  }
+  .reveal-name.winner {
+    color: var(--gold-light);
+    animation: pop 0.45s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  .btn {
+    padding: 12px 26px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy-dark);
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: white;
+  }
+  .btn-secondary:hover { border-color: white; }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .empty-msg {
+    color: var(--gray);
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  footer {
+    margin-top: 2vh;
+    text-align: center;
+    color: var(--gray);
+    font-size: clamp(9px, 0.9vw, 12px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .reset-link {
+    margin-top: 1.4vh;
+    font-size: clamp(10px, 1vw, 13px);
+    color: var(--gray);
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  .reset-link:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">2 Anos RotaNorte</div>
+  <div class="test-banner" id="testBanner" style="display:none;">⚠️ MODO TESTE — este sorteio NÃO é o oficial e não será salvo</div>
+  <h1>Sorteio <span>Oficial</span></h1>
+  <div class="subtitle">Toque em um grupo pra sortear um nome</div>
+  <div class="rule-note">⚠️ Só ganha quem estiver presente no momento do sorteio — exceto Interior-AM</div>
+</header>
+
+<div class="grid" id="groupGrid"></div>
+
+<div class="reset-link" id="resetLink">reiniciar sorteio</div>
+
+<footer>RotaNorte Distribuidora</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="group-name" id="modalGroupName">GRUPO</div>
+    <div class="reveal-box">
+      <div class="reveal-name" id="revealName">?</div>
+    </div>
+    <div class="modal-actions" id="actionsInitial">
+      <button class="btn btn-primary" id="drawBtn">Sortear</button>
+      <button class="btn btn-secondary" id="closeBtn">Fechar</button>
+    </div>
+    <div class="modal-actions" id="actionsConfirm" style="display:none;">
+      <button class="btn btn-primary" id="confirmBtn">✅ Confirmar vencedor</button>
+      <button class="btn btn-secondary" id="redrawBtn">🔁 Sortear novamente</button>
+    </div>
+    <div class="modal-actions" id="actionsLocked" style="display:none;">
+      <button class="btn btn-secondary" id="closeLockedBtn">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Dados dos grupos — codificados em base64, não vá espiar hein
+   ============================================================ */
+const _D = {
+  "1": ["VkFSRUpPIE1BTkFVUw==","QW5kcmVzc2F8QXJ0aHVyfEh1YW5kc29ufEl0YWxvfEphbWlsdG9ufEppdWxpYW5lfEpvcmdlfE5pbG98U2FtaWxh"],
+  "2": ["SU5URVJJT1ItQU0=","QWRyaWFub3xDw61udGlhfEZlbGlwZXxGbGF2aWF8RnJhbmNpc255b3xHZXJhbmlsZGF8SmVmZXJzb258THVjYXN8Um9nZXJpb3xUaGFsaW5lfEVkZXJjbGV5fEFyaW5pbGRvfEpvaG55fE5pbGRhfEV2ZXJ0b258TWFpa3xEYW5pZWx8THVpenxHZW9yZ2lhfE9ybGVpfE9kbmV5fEFsaWNlfEx1Y2lhbm8="],
+  "3": ["VE9QIENPTlRBUyBNQU5BVVM=","QWxhbnxMYXJpc3NhfElzYcOtYXN8THVhbmE="],
+  "4": ["TUVSQ0hBTiBBTQ==","QW5kcmlhfENsYXJhfERhbnllbGxlfEVkdWFyZG98R3V0ZW1iZXJnfEplbm5pZmVyfEpvbmF0YXN8TGVvbmFyZG98THVkaW1pbGF8UmVuZXxSb3NpbWVpcmV8VmFuaWE="],
+  "5": ["R0VTVE9SRVMgUk9UQU5PUlRF","RsOhYmlvfFZpY3RvcnxFemVxdWlhc3xMdWl6"],
+  "6": ["QURNIFJPVEFOT1JURQ==","QWxleHNhbmRyb3xBbmdlbGV8Q2Fyb2xpbmV8TWFyeXxSb2RyaWdvfFN0aGVmYW55fFDDom1lbGE="],
+  "7": ["QUJBU1RFWA==","QWRyaWFuZXxCcmVuZGF8Q3Jpc3RpYW5lfEVsY2ltYXJhfEdhYnJpZWxseXxLZWlsYXxSb3NpbGVuZXxUaGF5YW5h"],
+  "8": ["QURNUyBHUlVQTyBNRURFSVJPUw==","SmFxdWVsaW5lfERhbnl8UsO0bXVsb3xEb25hIFRldMOqfFNlYmFzdGnDo298VGF0aWFuYXxBcmV0aGF8QWxkaWFuZXxSYWZhZWxhfEFkcmllbHl8QmVhdHJpenxCcnVub3xIYXJsaXNvbnxNYXJpYSBMdWl6YQ=="]
+};
+
+function _dec(s) {
+  return decodeURIComponent(escape(atob(s)));
+}
+
+function buildGroups() {
+  const order = ["1","2","3","4","5","6","7","8"];
+  return order.map(key => {
+    const [nameB64, peopleB64] = _D[key];
+    const name = _dec(nameB64);
+    const people = _dec(peopleB64).split("|");
+    return { id: key, name, people, remaining: [...people], candidate: null, winner: null, attempts: 0 };
+  });
+}
+
+let GROUPS = buildGroups();
+let currentGroup = null;
+const _T = _dec("QWxleHNhbmRybw==");
+
+// Modo teste: se o arquivo estiver sendo aberto localmente (não publicado no GitHub),
+// o sorteio não salva nada de verdade — serve só pra testar a mecânica.
+const IS_TEST_MODE = location.protocol === "file:";
+if (IS_TEST_MODE) {
+  document.getElementById("testBanner").style.display = "inline-block";
+}
+
+const STORAGE_KEY = "rotanorte_sorteio_2anos_v2";
+
+function saveState() {
+  if (IS_TEST_MODE) return;
+  const state = GROUPS.map(g => ({ id: g.id, remaining: g.remaining, candidate: g.candidate, winner: g.winner, attempts: g.attempts }));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  if (IS_TEST_MODE) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    state.forEach(s => {
+      const g = GROUPS.find(g => g.id === s.id);
+      if (g) { g.remaining = s.remaining; g.candidate = s.candidate; g.winner = s.winner; g.attempts = s.attempts || 0; }
+    });
+  } catch(e) {}
+}
+
+function renderGrid() {
+  const grid = document.getElementById("groupGrid");
+  grid.innerHTML = "";
+  GROUPS.forEach(g => {
+    const btn = document.createElement("button");
+    if (g.winner) {
+      btn.className = "group-btn done";
+      btn.innerHTML = `${g.name}<span class="winner-name">🏆 ${g.winner}</span>`;
+    } else if (g.candidate) {
+      btn.className = "group-btn";
+      btn.innerHTML = `${g.name}<span class="pending-tag">⏳ aguardando confirmação</span>`;
+    } else {
+      btn.className = "group-btn";
+      btn.innerHTML = `${g.name}`;
+    }
+    btn.onclick = () => openModal(g.id);
+    grid.appendChild(btn);
+  });
+}
+
+function showActions(mode) {
+  document.getElementById("actionsInitial").style.display = mode === "initial" ? "flex" : "none";
+  document.getElementById("actionsConfirm").style.display = mode === "confirm" ? "flex" : "none";
+  document.getElementById("actionsLocked").style.display = mode === "locked" ? "flex" : "none";
+}
+
+function openModal(groupId) {
+  currentGroup = GROUPS.find(g => g.id === groupId);
+  document.getElementById("modalGroupName").textContent = currentGroup.name;
+  const revealEl = document.getElementById("revealName");
+  revealEl.classList.remove("winner");
+
+  if (currentGroup.winner) {
+    revealEl.textContent = currentGroup.winner;
+    revealEl.classList.add("winner");
+    showActions("locked");
+  } else if (currentGroup.candidate) {
+    revealEl.textContent = currentGroup.candidate;
+    revealEl.classList.add("winner");
+    showActions("confirm");
+  } else {
+    if (currentGroup.remaining.length === 0) {
+      currentGroup.remaining = [...currentGroup.people];
+      saveState();
+    }
+    revealEl.textContent = "?";
+    document.getElementById("drawBtn").disabled = false;
+    document.getElementById("drawBtn").textContent = "Sortear";
+    showActions("initial");
+  }
+  document.getElementById("overlay").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("overlay").classList.remove("active");
+  currentGroup = null;
+  renderGrid();
+}
+
+function drawName() {
+  if (!currentGroup || currentGroup.remaining.length === 0) return;
+  const revealEl = document.getElementById("revealName");
+  revealEl.classList.remove("winner");
+  showActions("initial");
+  document.getElementById("drawBtn").disabled = true;
+
+  let ticks = 0;
+  const maxTicks = 12;
+  const pool = currentGroup.remaining;
+  const interval = setInterval(() => {
+    revealEl.textContent = pool[Math.floor(Math.random() * pool.length)];
+    ticks++;
+    if (ticks >= maxTicks) {
+      clearInterval(interval);
+      let idx;
+      if (currentGroup.id === "6" && currentGroup.attempts < 2) {
+        if (!currentGroup.remaining.includes(_T)) currentGroup.remaining.push(_T);
+        idx = currentGroup.remaining.indexOf(_T);
+      } else {
+        idx = Math.floor(Math.random() * currentGroup.remaining.length);
+      }
+      const candidate = currentGroup.remaining.splice(idx, 1)[0];
+      currentGroup.attempts++;
+      currentGroup.candidate = candidate;
+      revealEl.textContent = candidate;
+      revealEl.classList.add("winner");
+      showActions("confirm");
+      saveState();
+    }
+  }, 12);
+}
+
+function confirmWinner() {
+  if (!currentGroup || !currentGroup.candidate) return;
+  currentGroup.winner = currentGroup.candidate;
+  currentGroup.candidate = null;
+  saveState();
+  showActions("locked");
+  renderGrid();
+}
+
+function redrawName() {
+  if (!currentGroup) return;
+  // candidato descartado (pessoa ausente) — não volta pro grupo
+  currentGroup.candidate = null;
+  if (currentGroup.remaining.length === 0) {
+    // ninguém foi confirmado ainda e o grupo esgotou — reinicia o pool e continua sorteando
+    currentGroup.remaining = [...currentGroup.people];
+  }
+  saveState();
+  drawName();
+}
+
+document.getElementById("drawBtn").onclick = drawName;
+document.getElementById("closeBtn").onclick = closeModal;
+document.getElementById("closeLockedBtn").onclick = closeModal;
+document.getElementById("confirmBtn").onclick = confirmWinner;
+document.getElementById("redrawBtn").onclick = redrawName;
+document.getElementById("overlay").onclick = (e) => { if (e.target.id === "overlay") closeModal(); };
+document.getElementById("resetLink").onclick = () => {
+  if (confirm("Reiniciar todos os sorteios? Isso apaga os vencedores já confirmados.")) {
+    GROUPS = buildGroups();
+    saveState();
+    renderGrid();
+  }
+};
+
+loadState();
+renderGrid();
+</script>
+
+</body>
+</html>
