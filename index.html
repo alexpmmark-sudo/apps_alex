@@ -258,7 +258,7 @@
 
 <div class="reset-link" id="resetLink">reiniciar sorteio</div>
 
-<footer>RotaNorte Distribuidora · v2026.08.01-001</footer>
+<footer>RotaNorte Distribuidora · v2026.08.01-002</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -273,6 +273,7 @@
     <div class="modal-actions" id="actionsConfirm" style="display:none;">
       <button class="btn btn-primary" id="confirmBtn">✅ Confirmar vencedor</button>
       <button class="btn btn-secondary" id="redrawBtn">🔁 Sortear novamente</button>
+      <button class="btn btn-secondary" id="closeConfirmBtn">Fechar</button>
     </div>
     <div class="modal-actions" id="actionsLocked" style="display:none;">
       <button class="btn btn-secondary" id="closeLockedBtn">Fechar</button>
@@ -459,6 +460,7 @@ function redrawName() {
 
 document.getElementById("drawBtn").onclick = drawName;
 document.getElementById("closeBtn").onclick = closeModal;
+document.getElementById("closeConfirmBtn").onclick = closeModal;
 document.getElementById("closeLockedBtn").onclick = closeModal;
 document.getElementById("confirmBtn").onclick = confirmWinner;
 document.getElementById("redrawBtn").onclick = redrawName;
