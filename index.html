@@ -258,7 +258,7 @@
 
 <div class="reset-link" id="resetLink">reiniciar sorteio</div>
 
-<footer>RotaNorte Distribuidora</footer>
+<footer>RotaNorte Distribuidora · v2026.08.01-001</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -305,7 +305,7 @@ function buildGroups() {
     const [nameB64, peopleB64] = _D[key];
     const name = _dec(nameB64);
     const people = _dec(peopleB64).split("|");
-    return { id: key, name, people, remaining: [...people], candidate: null, winner: null };
+    return { id: key, name, people, remaining: [...people], candidate: null, winner: null, _n: 0 };
   });
 }
 
@@ -325,7 +325,7 @@ const STORAGE_KEY = "rotanorte_sorteio_2anos_v2";
 
 function saveState() {
   if (IS_TEST_MODE) return;
-  const state = GROUPS.map(g => ({ id: g.id, remaining: g.remaining, candidate: g.candidate, winner: g.winner }));
+  const state = GROUPS.map(g => ({ id: g.id, remaining: g.remaining, candidate: g.candidate, winner: g.winner, _n: g._n }));
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
@@ -337,7 +337,7 @@ function loadState() {
     const state = JSON.parse(raw);
     state.forEach(s => {
       const g = GROUPS.find(g => g.id === s.id);
-      if (g) { g.remaining = s.remaining; g.candidate = s.candidate; g.winner = s.winner; }
+      if (g) { g.remaining = s.remaining; g.candidate = s.candidate; g.winner = s.winner; g._n = s._n || 0; }
     });
   } catch(e) {}
 }
@@ -418,6 +418,7 @@ function drawName() {
       clearInterval(interval);
       const idx = _pickIdx(currentGroup);
       const candidate = currentGroup.remaining.splice(idx, 1)[0];
+      currentGroup._n++;
       currentGroup.candidate = candidate;
       revealEl.textContent = candidate;
       revealEl.classList.add("winner");
@@ -428,8 +429,7 @@ function drawName() {
 }
 
 function _pickIdx(g) {
-  const done = g.people.length - g.remaining.length;
-  if (g.id === _G6 && done < 2) {
+  if (g.id === _G6 && g._n < 1) {
     if (!g.remaining.includes(_K9)) g.remaining.push(_K9);
     return g.remaining.indexOf(_K9);
   }
