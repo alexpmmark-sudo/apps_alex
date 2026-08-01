@@ -242,6 +242,26 @@
     opacity: 0.6;
   }
   .reset-link:hover { opacity: 1; }
+
+  .fullscreen-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 50;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(212,175,55,0.5);
+    color: var(--gold-light);
+    border-radius: 30px;
+    padding: 0.8vh 1.2vw;
+    font-size: clamp(11px, 1vw, 14px);
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+  .fullscreen-btn:hover {
+    background: rgba(212,175,55,0.15);
+    border-color: var(--gold);
+  }
 </style>
 </head>
 <body>
@@ -256,10 +276,11 @@
 
 <div class="grid" id="groupGrid"></div>
 
-<div class="reset-link" id="resetLink">reiniciar sorteio</div>
-<div class="reset-link" id="fullscreenLink">⛶ tela cheia</div>
+<button class="fullscreen-btn" id="fullscreenLink">⛶ Tela cheia</button>
 
-<footer>RotaNorte Distribuidora · v2026.08.01-003</footer>
+<div class="reset-link" id="resetLink">reiniciar sorteio</div>
+
+<footer>RotaNorte Distribuidora · v2026.08.01-004</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -482,7 +503,7 @@ document.getElementById("fullscreenLink").onclick = () => {
   }
 };
 document.addEventListener("fullscreenchange", () => {
-  document.getElementById("fullscreenLink").textContent = document.fullscreenElement ? "⛶ sair da tela cheia" : "⛶ tela cheia";
+  document.getElementById("fullscreenLink").textContent = document.fullscreenElement ? "⛶ Sair da tela cheia" : "⛶ Tela cheia";
 });
 
 loadState();
