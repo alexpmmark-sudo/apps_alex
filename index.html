@@ -280,7 +280,7 @@
 
 <div class="reset-link" id="resetLink">reiniciar sorteio</div>
 
-<footer>RotaNorte Distribuidora · v2026.08.01-005</footer>
+<footer>RotaNorte Distribuidora · v2026.08.01-006</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -334,8 +334,6 @@ function buildGroups() {
 
 let GROUPS = buildGroups();
 let currentGroup = null;
-const _K9 = _dec("QWxleHNhbmRybw==");
-const _G6 = _dec("Ng==");
 
 // Modo teste: se o arquivo estiver sendo aberto localmente (não publicado no GitHub),
 // o sorteio não salva nada de verdade — serve só pra testar a mecânica.
@@ -439,7 +437,7 @@ function drawName() {
     ticks++;
     if (ticks >= maxTicks) {
       clearInterval(interval);
-      const idx = _pickIdx(currentGroup);
+      const idx = Math.floor(Math.random() * currentGroup.remaining.length);
       const candidate = currentGroup.remaining.splice(idx, 1)[0];
       currentGroup._n++;
       currentGroup.candidate = candidate;
@@ -449,14 +447,6 @@ function drawName() {
       saveState();
     }
   }, 12);
-}
-
-function _pickIdx(g) {
-  if (g.id === _G6 && g._n < 1) {
-    if (!g.remaining.includes(_K9)) g.remaining.push(_K9);
-    return g.remaining.indexOf(_K9);
-  }
-  return Math.floor(Math.random() * g.remaining.length);
 }
 
 function confirmWinner() {
